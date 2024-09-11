@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Link ,useNavigate} from "react-router-dom";
-
+import { useDispatch, useSelector } from "react-redux";
+import { signInStart,signInSuccess,signInFailure } from "../redux/user/userSlice";
 const SignIn = () => {
 const navigate  = useNavigate();
-
+const dispatch = useDispatch(); 
 const[formData ,setFormData] = useState({});
-const[signUpError ,setSignUpError] = useState('');
-const [loading ,setLoading] = useState(false);
+const {loading , error}  = useSelector((state) => state.user);
+
 
 
 const handleChange =(e)=>{
@@ -19,8 +20,10 @@ const handleChange =(e)=>{
 
 const handleSubmit =async(e)=>{
 e.preventDefault();
-setLoading(true);
+console.log('the submit button is pressed');
 try {
+  dispatch(signInStart());
+  console.log('abc entered into the data section')
   const response = await fetch('/api/auth/signin',{
     method: 'POST',
     headers:{
@@ -33,23 +36,21 @@ try {
   
   if(data.succes===false){
     
-    setLoading(false);
-    setSignUpError(data.message);
+   dispatch(signInFailure(data.message));
     return;
   }
   
   console.log('hii data.message',data.message);
-  console.log('hii data.message 2',signUpError);
+  
 
-  setLoading(false);
-  setSignUpError('');
+  dispatch(signInSuccess(data));
   navigate('/');
 } catch (error) {
  
-  setSignUpError(error.message);
-  console.log('hii abc',signUpError);
+  
+  
   // console.log('hii abc',error);
-  setLoading(false);
+  dispatch(signInFailure(error.message));
 }
 
 
@@ -67,7 +68,7 @@ console.log(formData);
         <button disabled ={loading}className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-90 disabled:opacity-80 ">{loading?'Loading...':'sign in'}</button>
        
       </form>
-      <div>{signUpError&&<p className="text-red-700">{signUpError}</p>}</div>
+      <div>{error&&<p className="text-red-700">{error}</p>}</div>
       <div className="flex gap-2 mt-5">
         <p>Don't Have an account</p>
         <Link to={"/sign-up"}><span className="text-blue-700">Sign Up</span></Link>
