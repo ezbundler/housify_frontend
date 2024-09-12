@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link ,useNavigate} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { signInStart,signInSuccess,signInFailure } from "../redux/user/userSlice";
+import Oauth from "../components/Oauth";
 const SignIn = () => {
 const navigate  = useNavigate();
 const dispatch = useDispatch(); 
@@ -66,7 +67,7 @@ console.log(formData);
         <input onChange={handleChange} type="text" placeholder="password" className="border p-3 rounded-lg" id="password" />
         
         <button disabled ={loading}className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-90 disabled:opacity-80 ">{loading?'Loading...':'sign in'}</button>
-       
+       <Oauth/>
       </form>
       <div>{error&&<p className="text-red-700">{error}</p>}</div>
       <div className="flex gap-2 mt-5">
