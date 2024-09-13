@@ -35,7 +35,7 @@ try {
   const data  = await response.json();
   console.log('hii',data);
   
-  if(data.succes===false){
+  if(data.success===false){
     
    dispatch(signInFailure(data.message));
     return;
