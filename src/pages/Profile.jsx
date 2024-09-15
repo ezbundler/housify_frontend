@@ -5,6 +5,7 @@ import { updateUserStart, updateUserSuccess,updateUserFailure,deleteUserFailure,
 import { useDispatch,useSelector } from 'react-redux'
 import { app } from '../firebase'
 import { toast } from 'react-toastify'
+import { Link } from 'react-router-dom'
 const Profile = () => {
 const fileRef =useRef(null)
   const {currentUser,loading,error} =useSelector((state)=> state.user)
@@ -119,7 +120,7 @@ dispatch(signOutsuccess(data));
       <input type='text' defaultValue={currentUser.email} placeholder='email' className='border p-3 rounded-lg' id='email'></input>
       <input type='text' placeholder='password' className='border p-3 rounded-lg' id='password'></input>
       <button className='bg-slate-700 text-white rounded-lg uppercase p-3 hover:opacity-95 disabled:opacity-70'>{loading?  'Loading...': 'Update'}</button>
-
+<Link className='bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-90' to={"/create-listing"}>create listing </Link>
 
     </form>
     <div className='flex justify-between mt-5'>
