@@ -6,6 +6,7 @@ import { useDispatch,useSelector } from 'react-redux'
 import { app } from '../firebase'
 import { toast } from 'react-toastify'
 import { Link } from 'react-router-dom'
+import { data } from 'autoprefixer'
 const Profile = () => {
 const fileRef =useRef(null)
   const {currentUser,loading,error} =useSelector((state)=> state.user)
@@ -13,6 +14,9 @@ const fileRef =useRef(null)
   const [filePercentage,setFilePercentage] = useState(0);
   const [fileUploadError,setFileUploadError] = useState(false);
   const[formData,setFormData] = useState({});
+  const [listings,setListings]  = useState([]);
+
+  const [showListingsError , setShowListingsError] = useState(false);
   const dispatch = useDispatch();
   useEffect(()=>{
    if (file) {
@@ -106,7 +110,23 @@ dispatch(signOutsuccess(data));
   }
 }
 
+const handleShowListing =async()=>{
+try {
+  setShowListingsError(false);
+  const res = await fetch(`/api/user/listings/${currentUser._id}`);
+  const  data = await res.json();
+  if(data.success===false){
+setShowListingsError(true)
+return;
+  }
+  // dispatch(showListingSuccess(data.listings));
+setListings(data);
 
+} catch (error) {
+  setShowListingsError(true);
+}
+}
+console.log(listings);
 
 
   return (
@@ -129,6 +149,35 @@ dispatch(signOutsuccess(data));
       <span className='text-red-700 cursor-pointer' onClick={handleSignOut}>Sign out
         </span>
         </div>
+        <button className='text-green-700 w-full' onClick={handleShowListing}>Show listings</button>
+        {showListingsError&& <p className='text-red-600 text-center'>Error fetching listings</p>}
+
+{listings && 
+listings.length > 0 && 
+<div className='flex flex-col gap-4'>
+  <h1 className='text-center mt-7 text-2xl font-semibold'>Your Listings</h1>
+
+
+ { listings.map((listing)=>(
+  
+    <div className='gap-4 border rounded-lg p-3 flex justify-between items-center' key={listing._id} >
+      <Link to={`/listing/${listing._id}`}>
+      <img src={listing.imageUrls[0]} alt='listing cover' className='h-16 w-16 object-contain'/>
+     
+      </Link>
+      <Link to={`/listing/${listing._id}`} className='text-slate-700 font-semibold hover:underline truncate flex-1'>
+      <p className=''>{listing.name}</p>
+  
+      </Link>
+      <div className='flex flex-col items-center'>
+  <button className='text-red-700 uppercase'>Delete</button>
+  <button className='text-green-700 uppercase'>Edit</button>
+      </div>
+      
+    </div>
+  ))}
+
+</div>}
     </div>
   )
 }
